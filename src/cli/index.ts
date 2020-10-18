@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import yargs from 'yargs';
 import process from 'process';
 import path from 'path';

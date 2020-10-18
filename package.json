@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "license": "MIT",
+  "bin": {
+    "absolutely": "dist/index.js"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "ts-node src/index.ts",
