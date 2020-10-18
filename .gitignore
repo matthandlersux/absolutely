@@ -77,3 +77,4 @@ packages/backend/uploads
 creds/all
 .gitsecret/keys/random_seed
 
+empty-testing-folder/*
