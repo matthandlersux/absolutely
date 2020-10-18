@@ -1,4 +1,4 @@
-# Absolutely
+# Absolutely [![Actions Status](https://github.com/matthandlersux/absolutely/workflows/CI/badge.svg)](https://github.com/matthandlersux/absolutely/actions)
 
 A tool for converting a javascript/typescript/etc project from relative to absolute imports
 
