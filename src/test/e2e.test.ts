@@ -1,6 +1,8 @@
 import { exec, ExecException } from 'child_process';
+import path from 'path';
+import process from 'process';
 
-import { rewriteAllFiles } from '../index';
+import { rewriteAllFiles } from '../utils';
 
 const fixturesPath = './src/test/fixtures';
 const preAdjustedFileFolder = `${fixturesPath}/copy-these-to-empty-folder`;
@@ -9,7 +11,8 @@ const expectedFolder = `${fixturesPath}/expected-resulting-file-tree`;
 
 const diffCommand = `diff -rq -x '.DS_Store' -x '.keep' ${emptyStartingFolder} ${expectedFolder}`;
 const copyFolderCommand = `cp -R ${preAdjustedFileFolder}/* ${emptyStartingFolder}/`;
-// const cleanupCommand = `rm -r ${emptyStartingFolder}/**/*.js`;
+
+const rootSpecFolder = path.join(process.cwd(), emptyStartingFolder);
 
 type ExecError = {
   error: ExecException;
@@ -32,15 +35,10 @@ describe('running the script against a real folder', () => {
     if (typeof result != 'string') throw new Error(`${result.error.toString()}: ${result.stderr}`);
   });
 
-  afterEach(async () => {
-    // const result = await promiseExec(cleanupCommand);
-    // if (typeof result != 'string') throw new Error(`${result.error.toString()}: ${result.stderr}`);
-  });
-
   it('updates all the files to have absolute imports', async () => {
     await rewriteAllFiles({
       glob: `${emptyStartingFolder}/**/*.js`,
-      rootSpec: ['./src/test/fixtures/empty-testing-folder/', 'app'],
+      rootSpec: [rootSpecFolder, 'app'],
     });
 
     const result = await promiseExec(diffCommand);

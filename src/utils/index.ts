@@ -1,6 +1,7 @@
 import { take, dropWhile } from 'lodash';
 
-import { RootSpec, PathSpec } from '../types';
+import { RootSpec, PathSpec, Options } from '../types';
+import { FileWalker } from '../file-walking';
 
 const importRegex = /^import .* from ('(.*)'|"(.*)");?$/i;
 const requireRegex = /\brequire\(('(.*)'|"(.*)")\);?/i;
@@ -81,4 +82,9 @@ const pathSpecFor = (relativePath: string): PathSpec => {
       topDownRelativePathPieces: [],
     },
   );
+};
+
+export const rewriteAllFiles = async (options: Options, convert = convertLine) => {
+  const fileWalker = new FileWalker();
+  await fileWalker.updateFilesWithOptions(options, convert);
 };

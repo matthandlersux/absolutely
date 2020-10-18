@@ -9,7 +9,7 @@ import { ConvertOptions } from '../utils';
 type Transformer = (convertOptions: ConvertOptions) => string;
 
 const promiseGlobber = (glob: string): Promise<Array<string>> => {
-  return util.promisify(Glob.glob)(glob);
+  return util.promisify(Glob.glob)(glob, { absolute: true });
 };
 
 const promiseReader = async (path: string): Promise<string> => {
