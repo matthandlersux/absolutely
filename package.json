@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "test:watch": "yarn test --watch",
-    "prettier": "prettier --write \"./**/*.{js,jsx,ts,tsx,css,json}\""
+    "prettier": "prettier --write \"./**/*.{js,jsx,ts,tsx,css,json}\"",
+    "typecheck:watch": "tsc --noEmit --watch"
   },
   "dependencies": {
     "lodash": "^4.17.20",
