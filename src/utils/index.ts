@@ -5,11 +5,17 @@ import { RootSpec, PathSpec } from '../types';
 const importRegex = /^import .* from ('(.*)'|"(.*)");?$/i;
 const requireRegex = /\brequire\(('(.*)'|"(.*)")\);?/i;
 
-export const convertLine = (currentPath: string, currentLine: string, rootSpec?: RootSpec): string => {
+export type ConvertOptions = {
+  currentPath: string;
+  toTransform: string;
+  rootSpec?: RootSpec;
+};
+
+export const convertLine = ({ currentPath, toTransform, rootSpec }: ConvertOptions): string => {
   return (
-    matchLineAndReplace(currentLine, importRegex, 1, currentPath, rootSpec) ||
-    matchLineAndReplace(currentLine, requireRegex, 1, currentPath, rootSpec) ||
-    currentLine
+    matchLineAndReplace(toTransform, importRegex, 1, currentPath, rootSpec) ||
+    matchLineAndReplace(toTransform, requireRegex, 1, currentPath, rootSpec) ||
+    toTransform
   );
 };
 
@@ -28,15 +34,16 @@ const matchLineAndReplace = (
 
     if ((quoted && unquoted && unquoted.startsWith('./')) || unquoted.startsWith('../')) {
       const quoteChar = quoted[0];
-      return line.replace(quoted, `${quoteChar}${convertPath(unquoted, currentPath, rootSpec)}${quoteChar}`);
+      const converted = convertPath({ currentPath, rootSpec, toTransform: unquoted });
+      return line.replace(quoted, `${quoteChar}${converted}${quoteChar}`);
     } else return null;
   } else return null;
 };
 
-export const convertPath = (relativePath: string, currentPath: string, rootSpec?: RootSpec): string => {
+export const convertPath = ({ currentPath, toTransform, rootSpec }: ConvertOptions): string => {
   const currentPathPieces: Array<string> = currentPath.split('/');
-  const relativePieces: Array<string> = relativePath.split('/');
-  const pathSpec: PathSpec = pathSpecFor(relativePath);
+  const relativePieces: Array<string> = toTransform.split('/');
+  const pathSpec: PathSpec = pathSpecFor(toTransform);
 
   let absolutePieces: Array<string> = currentPathPieces;
   if (rootSpec) {

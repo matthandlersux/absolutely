@@ -4,8 +4,9 @@ import Glob from 'glob';
 import util from 'util';
 
 import { RootSpec, Options } from '../types';
+import { ConvertOptions } from '../utils';
 
-type Transformer = (path: string, line: string, rootSpec?: RootSpec) => string;
+type Transformer = (convertOptions: ConvertOptions) => string;
 
 const promiseGlobber = (glob: string): Promise<Array<string>> => {
   return util.promisify(Glob.glob)(glob);
@@ -38,8 +39,12 @@ export class FileWalker {
   readWriteLinesOfFile = async (path: string, transformer: Transformer, options: Options): Promise<void> => {
     const fileContents = await this.reader(path);
     const lines = fileContents.replace(/\r\n/g, '\n').split('\n');
-    const adjustedLines = lines.map((line) => {
-      return transformer(pathUtil.dirname(path), line, options.absolute);
+    const adjustedLines = lines.map((toTransform) => {
+      return transformer({
+        currentPath: pathUtil.dirname(path),
+        toTransform,
+        rootSpec: options.absolute,
+      });
     });
     const adjustedFile = adjustedLines.join('\n');
     return this.writer(path, adjustedFile);

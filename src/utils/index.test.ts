@@ -31,8 +31,8 @@ describe('convertPath', () => {
       '../subfolder/test',
       '/Users/test/Documents/code/javascript/project/src/subfolder/test',
     ],
-  ])('converts a %s', (_spec, inputPath, outputPath) => {
-    expect(convertPath(inputPath, currentPath)).toBe(outputPath);
+  ])('converts a %s', (_spec, toTransform, outputPath) => {
+    expect(convertPath({ currentPath, toTransform })).toBe(outputPath);
   });
 
   describe('with a root name for the root directory', () => {
@@ -45,8 +45,8 @@ describe('convertPath', () => {
       ['path with unnecessary current file indicators', './../someFile', 'app/someFile'],
       ['path with multiple unnecessary current file indicators', '././../someFile', 'app/someFile'],
       ['path with unnecessary parent directory indicators', '../subfolder/test', 'app/subfolder/test'],
-    ])('%s', (_spec, line, outputPath) => {
-      expect(convertPath(line, currentPath, rootSpec)).toBe(outputPath);
+    ])('%s', (_spec, toTransform, outputPath) => {
+      expect(convertPath({ toTransform, currentPath, rootSpec })).toBe(outputPath);
     });
   });
 });
@@ -70,8 +70,8 @@ describe('convertLine', () => {
         'import * as MyThing from "/Users/test/Documents/code/javascript/project/src/myThing";',
       ],
       ['does not edit non relative imports', "import * as MyThing from 'fs';", "import * as MyThing from 'fs';"],
-    ])('%s', (_spec, line, expected) => {
-      expect(convertLine(currentPath, line)).toEqual(expected);
+    ])('%s', (_spec, toTransform, expected) => {
+      expect(convertLine({ currentPath, toTransform })).toEqual(expected);
     });
   });
 
@@ -113,15 +113,15 @@ describe('convertLine', () => {
         'const library = require("../myThing");',
         'const library = require("/Users/test/Documents/code/javascript/project/src/myThing");',
       ],
-    ])('%s', (_spec, line, expected) => {
-      expect(convertLine(currentPath, line)).toEqual(expected);
+    ])('%s', (_spec, toTransform, expected) => {
+      expect(convertLine({ currentPath, toTransform })).toEqual(expected);
     });
   });
 
   it.each([['that is just code baby', 'const value = someFunction(call);']])(
     'does not edit a line %s',
-    (_description, line) => {
-      expect(convertLine(currentPath, line)).toEqual(line);
+    (_description, toTransform) => {
+      expect(convertLine({ currentPath, toTransform })).toEqual(toTransform);
     },
   );
 });

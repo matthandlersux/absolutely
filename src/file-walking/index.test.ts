@@ -1,5 +1,6 @@
 import { FileWalker } from './index';
 import { Options } from '../types';
+import { ConvertOptions } from '../utils';
 
 describe('walkFilesWithGlob', () => {
   const files = ['a', 'b', 'c'];
@@ -39,7 +40,7 @@ describe('walkFilesWithGlob', () => {
     it('attempts to write a transformed file to the same place it read from', async () => {
       const filename = 'filename';
       const fileContents = 'abc\ncba';
-      const transformer = (_path: string, line: string) => line.replace('a', 'b');
+      const transformer = (convertOptions: ConvertOptions) => convertOptions.toTransform.replace('a', 'b');
       reader.mockResolvedValue(fileContents);
 
       await instance.readWriteLinesOfFile(filename, transformer, options);
@@ -54,7 +55,11 @@ describe('walkFilesWithGlob', () => {
 
       await instance.readWriteLinesOfFile(relativeFilename, transformer, options);
 
-      expect(transformer).toHaveBeenCalledWith('./src/path/to', expect.anything(), undefined);
+      expect(transformer).toHaveBeenCalledWith({
+        currentPath: './src/path/to',
+        toTransform: expect.anything(),
+        rootSpec: undefined,
+      });
     });
   });
 });
