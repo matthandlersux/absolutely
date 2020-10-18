@@ -2,6 +2,11 @@
 
 A tool for converting a javascript/typescript/etc project from relative to absolute imports
 
+Nobody likes doing folder math in their head! ...but when you have a large project that is already using relative
+imports, it's a pretty hard lift to convert. This tool should help you convince the powers that be on your project
+that it can be effortless. Note that there are some [helpful hints](#helpful-hints) at the bottom of this readme,
+since you will likely have to update your tooling.
+
 ## Options
 
 ```ts
