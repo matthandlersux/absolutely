@@ -1,8 +1,13 @@
 import { FileWalker } from './index';
+import { Options } from '../types';
 
 describe('walkFilesWithGlob', () => {
   const files = ['a', 'b', 'c'];
   const glob = '*.*';
+
+  const options: Options = {
+    glob,
+  };
 
   let globber: jest.Mock;
   let reader: jest.Mock;
@@ -37,9 +42,19 @@ describe('walkFilesWithGlob', () => {
       const transformer = (_path: string, line: string) => line.replace('a', 'b');
       reader.mockResolvedValue(fileContents);
 
-      await instance.readWriteLinesOfFile(filename, transformer);
+      await instance.readWriteLinesOfFile(filename, transformer, options);
 
       expect(writer).toHaveBeenCalledWith(filename, 'bbc\ncbb');
+    });
+
+    it('chops the filename off of the path passed to transformer', async () => {
+      const relativeFilename = './src/path/to/file.js';
+      reader.mockResolvedValue('');
+      const transformer = jest.fn();
+
+      await instance.readWriteLinesOfFile(relativeFilename, transformer, options);
+
+      expect(transformer).toHaveBeenCalledWith('./src/path/to', expect.anything(), undefined);
     });
   });
 });

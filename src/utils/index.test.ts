@@ -1,4 +1,5 @@
 import { convertPath, convertLine } from './index';
+import { RootSpec } from '../types';
 
 const currentPath = '/Users/test/Documents/code/javascript/project/src/subfolder';
 
@@ -33,6 +34,21 @@ describe('convertPath', () => {
   ])('converts a %s', (_spec, inputPath, outputPath) => {
     expect(convertPath(inputPath, currentPath)).toBe(outputPath);
   });
+
+  describe('with a root name for the root directory', () => {
+    const rootSpec: RootSpec = ['/Users/test/Documents/code/javascript/project/src', 'app'];
+
+    it.each([
+      ['file relatively from the same folder', './index', 'app/subfolder/index'],
+      ['file up a directory', '../someFile', 'app/someFile'],
+      ['cousin file', '../cousinFolder/someFile', 'app/cousinFolder/someFile'],
+      ['path with unnecessary current file indicators', './../someFile', 'app/someFile'],
+      ['path with multiple unnecessary current file indicators', '././../someFile', 'app/someFile'],
+      ['path with unnecessary parent directory indicators', '../subfolder/test', 'app/subfolder/test'],
+    ])('%s', (_spec, line, outputPath) => {
+      expect(convertPath(line, currentPath, rootSpec)).toBe(outputPath);
+    });
+  });
 });
 
 describe('convertLine', () => {
@@ -53,6 +69,7 @@ describe('convertLine', () => {
         'import * as MyThing from "../myThing";',
         'import * as MyThing from "/Users/test/Documents/code/javascript/project/src/myThing";',
       ],
+      ['does not edit non relative imports', "import * as MyThing from 'fs';", "import * as MyThing from 'fs';"],
     ])('%s', (_spec, line, expected) => {
       expect(convertLine(currentPath, line)).toEqual(expected);
     });
@@ -65,6 +82,7 @@ describe('convertLine', () => {
         "const library = require('../myThing');",
         "const library = require('/Users/test/Documents/code/javascript/project/src/myThing');",
       ],
+      ['does not edit non relative requires', "const library = require('fs');", "const library = require('fs');"],
       [
         'appearing in some code (indented)',
         "  const library = require('../myThing');",
