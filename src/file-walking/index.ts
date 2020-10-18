@@ -43,7 +43,7 @@ export class FileWalker {
       return transformer({
         currentPath: pathUtil.dirname(path),
         toTransform,
-        rootSpec: options.absolute,
+        rootSpec: options.rootSpec,
       });
     });
     const adjustedFile = adjustedLines.join('\n');

@@ -40,7 +40,7 @@ describe('running the script against a real folder', () => {
   it('updates all the files to have absolute imports', async () => {
     await rewriteAllFiles({
       glob: `${emptyStartingFolder}/**/*.js`,
-      absolute: ['./src/test/fixtures/empty-testing-folder/', 'app'],
+      rootSpec: ['./src/test/fixtures/empty-testing-folder/', 'app'],
     });
 
     const result = await promiseExec(diffCommand);

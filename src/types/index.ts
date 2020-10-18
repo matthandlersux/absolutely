@@ -7,5 +7,5 @@ export type RootSpec = [rootPath: string, rootName: string];
 
 export type Options = {
   glob: string;
-  absolute?: RootSpec;
+  rootSpec?: RootSpec;
 };
