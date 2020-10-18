@@ -54,7 +54,7 @@ describe('convertLine', () => {
         'import * as MyThing from "/Users/test/Documents/code/javascript/project/src/myThing";',
       ],
     ])('%s', (_spec, line, expected) => {
-      expect(convertLine(line, currentPath)).toEqual(expected);
+      expect(convertLine(currentPath, line)).toEqual(expected);
     });
   });
 
@@ -96,14 +96,14 @@ describe('convertLine', () => {
         'const library = require("/Users/test/Documents/code/javascript/project/src/myThing");',
       ],
     ])('%s', (_spec, line, expected) => {
-      expect(convertLine(line, currentPath)).toEqual(expected);
+      expect(convertLine(currentPath, line)).toEqual(expected);
     });
   });
 
   it.each([['that is just code baby', 'const value = someFunction(call);']])(
     'does not edit a line %s',
     (_description, line) => {
-      expect(convertLine(line, currentPath)).toEqual(line);
+      expect(convertLine(currentPath, line)).toEqual(line);
     },
   );
 });

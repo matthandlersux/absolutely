@@ -8,7 +8,7 @@ type PathSpec = {
 const importRegex = /^import .* from ('(.*)'|"(.*)");?$/i;
 const requireRegex = /\brequire\(('(.*)'|"(.*)")\);?/i;
 
-export const convertLine = (currentLine: string, currentPath: string): string => {
+export const convertLine = (currentPath: string, currentLine: string): string => {
   return (
     matchLineAndReplace(currentLine, importRegex, 1, currentPath) ||
     matchLineAndReplace(currentLine, requireRegex, 1, currentPath) ||
