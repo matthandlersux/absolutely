@@ -1,4 +1,4 @@
-import { convertPath, convertLine } from '@app/utils/index';
+import { convertPath, convertLine, requireRegex, isLineAQuotedMatchForRegex } from '@app/utils/index';
 import { RootSpec } from '@app/types';
 
 const currentPath = '/Users/test/Documents/code/javascript/project/src/subfolder';
@@ -84,6 +84,16 @@ describe('convertLine', () => {
       ],
       ['does not edit non relative requires', "const library = require('fs');", "const library = require('fs');"],
       [
+        'does not edit a require statement in a double quoted string',
+        '  "const library = require(\'../myThing\');"',
+        '  "const library = require(\'../myThing\');"',
+      ],
+      [
+        'does not edit a require statement in a single quoted string',
+        '  \'const library = require("../myThing");\'',
+        '  \'const library = require("../myThing");\'',
+      ],
+      [
         'appearing in some code (indented)',
         "  const library = require('../myThing');",
         "  const library = require('/Users/test/Documents/code/javascript/project/src/myThing');",
@@ -124,4 +134,16 @@ describe('convertLine', () => {
       expect(convertLine({ currentPath, toTransform })).toEqual(toTransform);
     },
   );
+
+  describe('isLineAQuotedMatchForRegex', () => {
+    describe('with a require regex', () => {
+      it.each([
+        '  \'const library = require("../myThing");\'',
+        '  "const library = require(\'../myThing\');"',
+        '  "const \\"library\\" = require(\'../myThing\');"',
+      ])('returns true for: {%s}', (string) => {
+        expect(isLineAQuotedMatchForRegex(string, requireRegex)).toBe(true);
+      });
+    });
+  });
 });
