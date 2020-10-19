@@ -21,7 +21,7 @@ type ExecError = {
 };
 
 const promiseExec = (command: string): Promise<string | ExecError> => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     exec(command, (error, stdout, stderr) => {
       if (error) resolve({ error, stderr, stdout });
       else resolve(stdout);

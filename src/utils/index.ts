@@ -44,7 +44,6 @@ const matchLineAndReplace = (
 
 export const convertPath = ({ currentPath, toTransform, rootSpec }: ConvertOptions): string => {
   const currentPathPieces: Array<string> = currentPath.split('/');
-  const relativePieces: Array<string> = toTransform.split('/');
   const pathSpec: PathSpec = pathSpecFor(toTransform);
 
   let absolutePieces: Array<string> = currentPathPieces;
