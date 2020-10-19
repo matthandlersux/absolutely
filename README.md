@@ -1,20 +1,34 @@
 # Absolutely [![Actions Status](https://github.com/matthandlersux/absolutely/workflows/CI/badge.svg)](https://github.com/matthandlersux/absolutely/actions)
 
-A tool for converting a javascript/typescript/etc project from relative to absolute imports
+How is one supposed to compute where `../../../../../some/file` is!? Nobody likes doing folder math in their head!
 
-Nobody likes doing folder math in their head! ...but when you have a large project that is already using relative
-imports, it's a pretty hard lift to convert. This tool should help you convince the powers that be on your project
-that it can be effortless. Note that there are some [helpful hints](#helpful-hints) at the bottom of this readme,
-since you will likely have to update your tooling.
+![insertgif.com](https://media0.giphy.com/media/ZThQqlxY5BXMc/200.gif)
 
-## Options
+...but when you have a large project already using relative imports, it's annoying to convert it. This
+tool should help you convince the rest of your team that it can be effortless. Note that there are some
+[helpful hints](#helpful-hints) at the bottom of this readme, since you will likely have to update your tooling.
 
-```ts
-glob: { type: 'string', demandOption: true, alias: 'g' },
-rootName: { type: 'string', demandOption: false, alias: 'n' },
-rootAbsolutePath: { type: 'string', demandOption: false, alias: 'r' },
-rootRelativePath: { type: 'string', demandOption: false, alias: 'l' },
+## Usage
+
+```bash
+absolutely -g './src/**/*.ts?(x)' -n '@app' -r './src'
 ```
+
+This will rename an import in a file `./src/components/clock/index.ts` like so:
+```diff
+- import { thing } from '../avatar';
++ import { thing } from '@app/components/avatar';
+```
+
+### Options
+
+For extra info about glob syntax [see here](https://github.com/isaacs/node-glob#glob-primer)
+
+| Flag | Name               | Description                                                       | Type     | Info                        |
+| ---- | --------           | -----------                                                       | ----     | ----                        |
+| -g   | --glob             | the glob used to enumerate files that should be edited            | [string] | [required]                  |
+| -n   | --root&#x2011;name | name the root of the project, ex: "@app" in "@app/components/..." | [string] | [required]                  |
+| -r   | --root&#x2011;path | a path you want to be considered the root of the project          | [string] | [default: the current path] |
 
 ## Helpful Hints
 

@@ -8,11 +8,13 @@ import * as cli from './cli';
 import { Options, RootSpec } from './types';
 
 const main = async () => {
+  const cliOptions = cli.getOptions();
+
   const spinner = ora({
     text: '...loading',
   }).start();
 
-  await utils.rewriteAllFiles(cli.getOptions(), (options) => {
+  await utils.rewriteAllFiles(cliOptions, (options) => {
     spinner.text = options.currentPath;
     return utils.convertLine(options);
   });

@@ -7,18 +7,38 @@ import path from 'path';
 import { Options, RootSpec } from '../types';
 
 export const getOptions = (): Options => {
-  const args = yargs.options({
-    glob: { type: 'string', demandOption: true, alias: 'g' },
-    rootName: { type: 'string', demandOption: false, alias: 'n' },
-    rootAbsolutePath: { type: 'string', demandOption: false, alias: 'r' },
-    rootRelativePath: { type: 'string', demandOption: false, alias: 'l' },
-  }).argv;
+  const args = yargs
+    .options({
+      glob: {
+        type: 'string',
+        demandOption: true,
+        alias: 'g',
+        description: 'the glob used to enumerate files that should be edited',
+      },
+      'root-name': {
+        type: 'string',
+        demandOption: true,
+        alias: 'n',
+        description: 'name the root of the project, ex: "@app" in "@app/components/..."',
+      },
+      'root-path': {
+        type: 'string',
+        demandOption: false,
+        alias: 'r',
+        description: 'a path you want to be considered the root of the project',
+        defaultDescription: 'the current path',
+      },
+    })
+    .usage('Usage: $0 -g [glob] -n [root-name] -r [root-relative-path]')
+    .example('$0 -g "./src/**/*.tsx?" -n "@app" -r "./src"', 'convert all relative imports to absolute').argv;
 
   let rootSpec: RootSpec | undefined;
-  if (args.rootName) {
-    if (args.rootAbsolutePath) rootSpec = [args.rootAbsolutePath, args.rootName];
-    else if (args.rootRelativePath) rootSpec = [path.join(process.cwd(), args.rootRelativePath), args.rootName];
-    else rootSpec = [process.cwd(), args.rootName];
+  if (args['root-name']) {
+    if (args['root-path']) {
+      const providedPath = args['root-path'];
+      const absolutePath = providedPath.startsWith('/') ? providedPath : path.join(process.cwd(), args['root-path']);
+      rootSpec = [absolutePath, args['root-name']];
+    } else rootSpec = [process.cwd(), args['root-name']];
   }
 
   return {
