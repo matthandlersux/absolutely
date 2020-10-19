@@ -4,7 +4,7 @@ import yargs from 'yargs';
 import process from 'process';
 import path from 'path';
 
-import { Options, RootSpec } from '../types';
+import { Options, RootSpec } from '@app/types';
 
 export const getOptions = (): Options => {
   const args = yargs

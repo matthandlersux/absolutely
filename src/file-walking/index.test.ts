@@ -1,6 +1,6 @@
-import { FileWalker } from './index';
-import { Options } from '../types';
-import { ConvertOptions } from '../utils';
+import { FileWalker } from '@app/file-walking/index';
+import { Options } from '@app/types';
+import { ConvertOptions } from '@app/utils';
 
 describe('walkFilesWithGlob', () => {
   const files = ['a', 'b', 'c'];

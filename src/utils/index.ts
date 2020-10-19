@@ -1,7 +1,7 @@
 import { take, dropWhile } from 'lodash';
 
-import { RootSpec, PathSpec, Options } from '../types';
-import { FileWalker } from '../file-walking';
+import { RootSpec, PathSpec, Options } from '@app/types';
+import { FileWalker } from '@app/file-walking';
 
 const importRegex = /^import .* from ('(.*)'|"(.*)");?$/i;
 const requireRegex = /\brequire\(('(.*)'|"(.*)")\);?/i;

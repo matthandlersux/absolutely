@@ -2,7 +2,7 @@ import { exec, ExecException } from 'child_process';
 import path from 'path';
 import process from 'process';
 
-import { rewriteAllFiles } from '../utils';
+import { rewriteAllFiles } from '@app/utils';
 
 const fixturesPath = './src/test/fixtures';
 const preAdjustedFileFolder = `${fixturesPath}/copy-these-to-empty-folder`;

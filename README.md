@@ -75,6 +75,7 @@ it how to recognize your internal files:
 {
   "compilerOptions": {
     ...
+    "baseUrl": "./",
     "paths": {
       "@app/*": ["./src/*"]
     }

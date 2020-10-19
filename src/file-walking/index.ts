@@ -3,8 +3,8 @@ import * as pathUtil from 'path';
 import Glob from 'glob';
 import util from 'util';
 
-import { RootSpec, Options } from '../types';
-import { ConvertOptions } from '../utils';
+import { RootSpec, Options } from '@app/types';
+import { ConvertOptions } from '@app/utils';
 
 type Transformer = (convertOptions: ConvertOptions) => string;
 

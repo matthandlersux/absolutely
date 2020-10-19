@@ -1,5 +1,5 @@
-import { convertPath, convertLine } from './index';
-import { RootSpec } from '../types';
+import { convertPath, convertLine } from '@app/utils/index';
+import { RootSpec } from '@app/types';
 
 const currentPath = '/Users/test/Documents/code/javascript/project/src/subfolder';
 
