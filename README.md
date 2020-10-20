@@ -69,6 +69,8 @@ it how to recognize your internal files:
 
 ### Typescript
 
+#### For type checking and local development
+
 ```js
 // tsconfig.json
 
@@ -82,6 +84,41 @@ it how to recognize your internal files:
   }
 }
 ```
+
+#### For building a node runnable package
+
+Ok this is complicated, and I think it can be summed up by looking at the length of
+[this](https://github.com/microsoft/TypeScript/issues/15479) thread. Despite being able to interpret your
+absolute paths as a type checker and compiler, when you actually build your project (export to js files), TypeScript
+does not want to convert your absolute paths back to relative ones. That means that you can't simply do `yarn tsc` and
+then `node ./dist/index.js`. Here are two workarounds.
+
+##### tsconfig-paths and ts-node
+
+If you want to run your app using [ts-node](https://github.com/TypeStrong/ts-node), then you have to also use this plugin
+to tell it how to interpret the `tsconfig.json` "paths" defined locations: [tsconfig-paths](https://github.com/dividab/tsconfig-paths).
+
+You can then run your application with something like:
+
+```bash
+ts-node -r tsconfig-paths/register src/index.ts
+```
+
+Check the "scripts.dev" section of [package.json](package.json) for an example.
+
+##### tsc-alias
+
+If you want to compile your app to js, and then run it with **node**, however, you'll have to use
+[tsc-alias](https://github.com/justkey007/tsc-alias) to convert your absolute references back to relative ones in the
+compiled output.
+
+###### Notes
+
+* `tsc-alias` uses `rootDir` from `tsconfig.json` to rewrite your paths.
+* `tsc-alias` had a bug on non-Windows machines at the time of writing this, you can check "scripts.postinstall" in
+  [package.json](package.json) for an example of how to deal with that.
+
+Check the "scripts.build" section of [package.json](package.json) for an example.
 
 ### Webpack
 
