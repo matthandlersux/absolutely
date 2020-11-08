@@ -1,4 +1,5 @@
 import { take, dropWhile } from 'lodash';
+import * as path from 'path';
 
 import { RootSpec, PathSpec, Options } from '@app/types';
 import { FileWalker } from '@app/file-walking';
@@ -52,9 +53,9 @@ export const convertPath = ({ currentPath, toTransform, rootSpec, ignoreOutOfBou
   let absolutePieces: Array<string> = currentPathPieces;
   if (rootSpec) {
     const [pathPart, name] = rootSpec;
-    const piecesToRemove = pathPart.split('/');
+    const piecesToRemove = path.normalize(`${pathPart}/`).split('/');
 
-    if (currentPathPieces.length - pathSpec.upDirectoryCount < piecesToRemove.length) {
+    if (currentPathPieces.length - pathSpec.upDirectoryCount + 1 < piecesToRemove.length) {
       if (ignoreOutOfBounds) return toTransform;
       else
         throw new Error(

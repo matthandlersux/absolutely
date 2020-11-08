@@ -37,34 +37,45 @@ describe('convertPath', () => {
   });
 
   describe('with a root name for the root directory', () => {
-    const rootSpec: RootSpec = ['/Users/test/Documents/code/javascript/project/src', 'app'];
+    describe.each([
+      ['no trailing slash', '/Users/test/Documents/code/javascript/project/src'],
+      ['trailing slash', '/Users/test/Documents/code/javascript/project/src/'],
+    ])('with a rootSpec that has %s', (_spec, path) => {
+      const rootSpec: RootSpec = [path, 'app'];
 
-    describe('when an import references a file in a parent directory to the root', () => {
-      const toTransform = '../../package.json';
-      const payload = {
-        currentPath,
-        toTransform,
-        rootSpec,
-      };
+      describe('when an import references a file in a parent directory to the root', () => {
+        const toTransform = '../../package.json';
+        const payload = {
+          currentPath,
+          toTransform,
+          rootSpec,
+        };
 
-      it('throws an error when path boundaries are not ignored', () => {
-        expect(() => convertPath({ ...payload, ignoreOutOfBounds: false })).toThrow(/boundaries/);
+        it('properly converts the root directory', () => {
+          expect(convertPath({ ...payload, toTransform: '../package.json', ignoreOutOfBounds: true })).toBe(
+            'app/package.json',
+          );
+        });
+
+        it('throws an error when path boundaries are not ignored', () => {
+          expect(() => convertPath({ ...payload, ignoreOutOfBounds: false })).toThrow(/boundaries/);
+        });
+
+        it('does not update the line when path boundaries are ignored', () => {
+          expect(convertPath({ ...payload, ignoreOutOfBounds: true })).toBe(toTransform);
+        });
       });
 
-      it('does not update the line when path boundaries are ignored', () => {
-        expect(convertPath({ ...payload, ignoreOutOfBounds: true })).toBe(toTransform);
+      it.each([
+        ['file relatively from the same folder', './index', 'app/subfolder/index'],
+        ['file up a directory', '../someFile', 'app/someFile'],
+        ['cousin file', '../cousinFolder/someFile', 'app/cousinFolder/someFile'],
+        ['path with unnecessary current file indicators', './../someFile', 'app/someFile'],
+        ['path with multiple unnecessary current file indicators', '././../someFile', 'app/someFile'],
+        ['path with unnecessary parent directory indicators', '../subfolder/test', 'app/subfolder/test'],
+      ])('%s', (_spec, toTransform, outputPath) => {
+        expect(convertPath({ toTransform, currentPath, rootSpec, ignoreOutOfBounds })).toBe(outputPath);
       });
-    });
-
-    it.each([
-      ['file relatively from the same folder', './index', 'app/subfolder/index'],
-      ['file up a directory', '../someFile', 'app/someFile'],
-      ['cousin file', '../cousinFolder/someFile', 'app/cousinFolder/someFile'],
-      ['path with unnecessary current file indicators', './../someFile', 'app/someFile'],
-      ['path with multiple unnecessary current file indicators', '././../someFile', 'app/someFile'],
-      ['path with unnecessary parent directory indicators', '../subfolder/test', 'app/subfolder/test'],
-    ])('%s', (_spec, toTransform, outputPath) => {
-      expect(convertPath({ toTransform, currentPath, rootSpec, ignoreOutOfBounds })).toBe(outputPath);
     });
   });
 });
