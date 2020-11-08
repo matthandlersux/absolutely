@@ -4,6 +4,7 @@ import { RootSpec, PathSpec, Options } from '@app/types';
 import { FileWalker } from '@app/file-walking';
 
 const importRegex = /^import .* from ('(.*)'|"(.*)");?$/i;
+const multilineImportRegex = /^\} from ('(.*)'|"(.*)");?$/i;
 export const requireRegex = /\brequire\(('(.*)'|"(.*)")\);?/i;
 
 export type ConvertOptions = {
@@ -15,6 +16,7 @@ export type ConvertOptions = {
 export const convertLine = ({ currentPath, toTransform, rootSpec }: ConvertOptions): string => {
   return (
     matchLineAndReplace(toTransform, importRegex, 1, currentPath, rootSpec) ||
+    matchLineAndReplace(toTransform, multilineImportRegex, 1, currentPath, rootSpec) ||
     matchLineAndReplace(toTransform, requireRegex, 1, currentPath, rootSpec) ||
     toTransform
   );
