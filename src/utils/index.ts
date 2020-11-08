@@ -5,6 +5,7 @@ import { FileWalker } from '@app/file-walking';
 
 const importRegex = /^import .* from ('(.*)'|"(.*)");?$/i;
 const multilineImportRegex = /^\} from ('(.*)'|"(.*)");?$/i;
+const sideEffectImportRegex = /^import ('(.*)'|"(.*)");?$/i;
 export const requireRegex = /\brequire\(('(.*)'|"(.*)")\);?/i;
 
 export type ConvertOptions = {
@@ -17,6 +18,7 @@ export const convertLine = ({ currentPath, toTransform, rootSpec }: ConvertOptio
   return (
     matchLineAndReplace(toTransform, importRegex, 1, currentPath, rootSpec) ||
     matchLineAndReplace(toTransform, multilineImportRegex, 1, currentPath, rootSpec) ||
+    matchLineAndReplace(toTransform, sideEffectImportRegex, 1, currentPath, rootSpec) ||
     matchLineAndReplace(toTransform, requireRegex, 1, currentPath, rootSpec) ||
     toTransform
   );
