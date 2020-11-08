@@ -8,6 +8,7 @@ describe('walkFilesWithGlob', () => {
 
   const options: Options = {
     glob,
+    ignoreOutOfBounds: true,
   };
 
   let globber: jest.Mock;
@@ -55,11 +56,11 @@ describe('walkFilesWithGlob', () => {
 
       await instance.readWriteLinesOfFile(relativeFilename, transformer, options);
 
-      expect(transformer).toHaveBeenCalledWith({
-        currentPath: './src/path/to',
-        toTransform: expect.anything(),
-        rootSpec: undefined,
-      });
+      expect(transformer).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currentPath: './src/path/to',
+        }),
+      );
     });
   });
 });

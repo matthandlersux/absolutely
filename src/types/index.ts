@@ -8,4 +8,5 @@ export type RootSpec = [rootPath: string, rootName: string];
 export type Options = {
   glob: string;
   rootSpec?: RootSpec;
+  ignoreOutOfBounds: boolean;
 };

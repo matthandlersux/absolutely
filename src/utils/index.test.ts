@@ -2,6 +2,7 @@ import { convertPath, convertLine, requireRegex, isLineAQuotedMatchForRegex } fr
 import { RootSpec } from '@app/types';
 
 const currentPath = '/Users/test/Documents/code/javascript/project/src/subfolder';
+const ignoreOutOfBounds = true;
 
 describe('convertPath', () => {
   it.each([
@@ -32,11 +33,28 @@ describe('convertPath', () => {
       '/Users/test/Documents/code/javascript/project/src/subfolder/test',
     ],
   ])('converts a %s', (_spec, toTransform, outputPath) => {
-    expect(convertPath({ currentPath, toTransform })).toBe(outputPath);
+    expect(convertPath({ currentPath, toTransform, ignoreOutOfBounds })).toBe(outputPath);
   });
 
   describe('with a root name for the root directory', () => {
     const rootSpec: RootSpec = ['/Users/test/Documents/code/javascript/project/src', 'app'];
+
+    describe('when an import references a file in a parent directory to the root', () => {
+      const toTransform = '../../package.json';
+      const payload = {
+        currentPath,
+        toTransform,
+        rootSpec,
+      };
+
+      it('throws an error when path boundaries are not ignored', () => {
+        expect(() => convertPath({ ...payload, ignoreOutOfBounds: false })).toThrow(/boundaries/);
+      });
+
+      it('does not update the line when path boundaries are ignored', () => {
+        expect(convertPath({ ...payload, ignoreOutOfBounds: true })).toBe(toTransform);
+      });
+    });
 
     it.each([
       ['file relatively from the same folder', './index', 'app/subfolder/index'],
@@ -46,7 +64,7 @@ describe('convertPath', () => {
       ['path with multiple unnecessary current file indicators', '././../someFile', 'app/someFile'],
       ['path with unnecessary parent directory indicators', '../subfolder/test', 'app/subfolder/test'],
     ])('%s', (_spec, toTransform, outputPath) => {
-      expect(convertPath({ toTransform, currentPath, rootSpec })).toBe(outputPath);
+      expect(convertPath({ toTransform, currentPath, rootSpec, ignoreOutOfBounds })).toBe(outputPath);
     });
   });
 });
@@ -71,7 +89,7 @@ describe('convertLine', () => {
       ],
       ['does not edit non relative imports', "import * as MyThing from 'fs';", "import * as MyThing from 'fs';"],
     ])('%s', (_spec, toTransform, expected) => {
-      expect(convertLine({ currentPath, toTransform })).toEqual(expected);
+      expect(convertLine({ currentPath, toTransform, ignoreOutOfBounds })).toEqual(expected);
     });
   });
 
@@ -124,14 +142,14 @@ describe('convertLine', () => {
         'const library = require("/Users/test/Documents/code/javascript/project/src/myThing");',
       ],
     ])('%s', (_spec, toTransform, expected) => {
-      expect(convertLine({ currentPath, toTransform })).toEqual(expected);
+      expect(convertLine({ currentPath, toTransform, ignoreOutOfBounds })).toEqual(expected);
     });
   });
 
   it.each([['that is just code baby', 'const value = someFunction(call);']])(
     'does not edit a line %s',
     (_description, toTransform) => {
-      expect(convertLine({ currentPath, toTransform })).toEqual(toTransform);
+      expect(convertLine({ currentPath, toTransform, ignoreOutOfBounds })).toEqual(toTransform);
     },
   );
 

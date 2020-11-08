@@ -22,13 +22,17 @@ This will rename an import in a file `./src/components/clock/index.ts` like so:
 
 ### Options
 
+need an option for what to do with things that go out of the root
+probably error | ignore with warning
+
 For extra info about glob syntax [see here](https://github.com/isaacs/node-glob#glob-primer)
 
-| Flag | Name               | Description                                                       | Type     | Info                        |
-| ---- | --------           | -----------                                                       | ----     | ----                        |
-| -g   | --glob             | the glob used to enumerate files that should be edited            | [string] | [required]                  |
-| -n   | --root&#x2011;name | name the root of the project, ex: "@app" in "@app/components/..." | [string] | [required]                  |
-| -r   | --root&#x2011;path | a path you want to be considered the root of the project          | [string] | [default: the current path] |
+| Flag | Name                    | Description                                                       | Type      | Info                        |
+| ---- | --------                | -----------                                                       | ----      | ----                        |
+| -g   | --glob                  | the glob used to enumerate files that should be edited            | [string]  | [required]                  |
+| -n   | --root&#x2011;name      | name the root of the project, ex: "@app" in "@app/components/..." | [string]  | [required]                  |
+| -r   | --root&#x2011;path      | a path you want to be considered the root of the project          | [string]  | [default: the current path] |
+| -b   | --fail-on-out-of-bounds | whether we should ignore file references above the specified root | [boolean] | [default: don't fail]       |
 
 ## Helpful Hints
 

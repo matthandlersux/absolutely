@@ -44,6 +44,7 @@ export class FileWalker {
         currentPath: pathUtil.dirname(path),
         toTransform,
         rootSpec: options.rootSpec,
+        ignoreOutOfBounds: options.ignoreOutOfBounds,
       });
     });
     const adjustedFile = adjustedLines.join('\n');

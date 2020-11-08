@@ -39,6 +39,7 @@ describe('running the script against a real folder', () => {
     await rewriteAllFiles({
       glob: `${emptyStartingFolder}/**/*.js`,
       rootSpec: [rootSpecFolder, 'app'],
+      ignoreOutOfBounds: true,
     });
 
     const result = await promiseExec(diffCommand);
@@ -46,5 +47,15 @@ describe('running the script against a real folder', () => {
     if (typeof result === 'string') {
       expect(result).toBe('');
     } else fail(result);
+  });
+
+  it('throws an error if we are not ignoring out of bounds', async () => {
+    await expect(
+      rewriteAllFiles({
+        glob: `${emptyStartingFolder}/**/*.js`,
+        rootSpec: [rootSpecFolder, 'app'],
+        ignoreOutOfBounds: false,
+      }),
+    ).rejects.toThrow(/boundaries/);
   });
 });

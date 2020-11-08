@@ -26,6 +26,14 @@ export const getOptions = (): Options => {
         description: 'a path you want to be considered the root of the project',
         defaultDescription: 'the current path',
       },
+      'fail-on-out-of-bounds': {
+        type: 'boolean',
+        demandOption: false,
+        default: false,
+        alias: 'b',
+        description: 'whether we should ignore file references above the specified root',
+        defaultDescription: "don't fail",
+      },
     })
     .usage('Usage: $0 -g [glob] -n [root-name] -r [root-relative-path]')
     .example('$0 -g "./src/**/*.tsx?" -n "@app" -r "./src"', 'convert all relative imports to absolute').argv;
@@ -42,5 +50,6 @@ export const getOptions = (): Options => {
   return {
     glob: args.glob,
     rootSpec,
+    ignoreOutOfBounds: !args['fail-on-out-of-bounds'],
   };
 };

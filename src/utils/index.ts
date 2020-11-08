@@ -12,24 +12,23 @@ export type ConvertOptions = {
   currentPath: string;
   toTransform: string;
   rootSpec?: RootSpec;
+  ignoreOutOfBounds: boolean;
 };
 
-export const convertLine = ({ currentPath, toTransform, rootSpec }: ConvertOptions): string => {
+export const convertLine = (options: ConvertOptions): string => {
   return (
-    matchLineAndReplace(toTransform, importRegex, 1, currentPath, rootSpec) ||
-    matchLineAndReplace(toTransform, multilineImportRegex, 1, currentPath, rootSpec) ||
-    matchLineAndReplace(toTransform, sideEffectImportRegex, 1, currentPath, rootSpec) ||
-    matchLineAndReplace(toTransform, requireRegex, 1, currentPath, rootSpec) ||
-    toTransform
+    matchLineAndReplace(options, importRegex, 1) ||
+    matchLineAndReplace(options, multilineImportRegex, 1) ||
+    matchLineAndReplace(options, sideEffectImportRegex, 1) ||
+    matchLineAndReplace(options, requireRegex, 1) ||
+    options.toTransform
   );
 };
 
 const matchLineAndReplace = (
-  line: string,
+  { toTransform: line, currentPath, rootSpec, ignoreOutOfBounds }: ConvertOptions,
   regex: RegExp,
   groupOffsetIndex: number,
-  currentPath: string,
-  rootSpec?: RootSpec,
 ) => {
   const requireResult = line.match(regex);
 
@@ -40,13 +39,13 @@ const matchLineAndReplace = (
 
     if (quoted && unquoted && notInAString && (unquoted.startsWith('./') || unquoted.startsWith('../'))) {
       const quoteChar = quoted[0];
-      const converted = convertPath({ currentPath, rootSpec, toTransform: unquoted });
+      const converted = convertPath({ currentPath, rootSpec, toTransform: unquoted, ignoreOutOfBounds });
       return line.replace(quoted, `${quoteChar}${converted}${quoteChar}`);
     } else return null;
   } else return null;
 };
 
-export const convertPath = ({ currentPath, toTransform, rootSpec }: ConvertOptions): string => {
+export const convertPath = ({ currentPath, toTransform, rootSpec, ignoreOutOfBounds }: ConvertOptions): string => {
   const currentPathPieces: Array<string> = currentPath.split('/');
   const pathSpec: PathSpec = pathSpecFor(toTransform);
 
@@ -54,7 +53,16 @@ export const convertPath = ({ currentPath, toTransform, rootSpec }: ConvertOptio
   if (rootSpec) {
     const [pathPart, name] = rootSpec;
     const piecesToRemove = pathPart.split('/');
-    absolutePieces = [name, ...dropWhile(currentPathPieces, (piece, index) => piece === piecesToRemove[index])];
+
+    if (currentPathPieces.length - pathSpec.upDirectoryCount < piecesToRemove.length) {
+      if (ignoreOutOfBounds) return toTransform;
+      else
+        throw new Error(
+          `found relative reference outside of the boundaries of specified root:\nfile: ${currentPath}\npath: ${toTransform}`,
+        );
+    } else {
+      absolutePieces = [name, ...dropWhile(currentPathPieces, (piece, index) => piece === piecesToRemove[index])];
+    }
   }
 
   return [
