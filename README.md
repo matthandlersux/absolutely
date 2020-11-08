@@ -85,6 +85,8 @@ it how to recognize your internal files:
 }
 ```
 
+###### Note that the path in "paths" gets appended to `baseUrl`'s path
+
 #### For building a node runnable package
 
 Ok this is complicated, and I think it can be summed up by looking at the length of
