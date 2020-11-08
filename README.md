@@ -141,5 +141,16 @@ module.exports = {
 
 ### Create-react-app
 
-If you're using Typescript, see [Typescript](#typescript). If you're using js, see
-[here](https://create-react-app.dev/docs/importing-a-component/#absolute-imports)
+If you're using Typescript, see [Typescript](#typescript) to familiarize yourself with that aspect.
+If you're using js, see [here](https://create-react-app.dev/docs/importing-a-component/#absolute-imports).
+
+Note that there are some caveats with getting absolute paths to work with CRA. First, CRA
+supports absolute imports (as indicated in the link above), but **not** with a "paths" directive.
+You can follow the conversation
+[here](https://github.com/facebook/create-react-app/issues/8909#issuecomment-686526409).
+
+You'll see in that issue that there is in fact a workaround for this by using the "extends" directive in
+`tsconfig.json`, and using [react-app-rewired](https://www.npmjs.com/package/react-app-rewired) to inject an adjustment
+to the webpack config.
+[Here](https://medium.com/@gustavograeff1998/absolute-imports-with-create-react-app-typescript-e87878cab65b) is a
+blogpost that explains it more thoroughly.
