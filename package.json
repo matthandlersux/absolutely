@@ -1,6 +1,6 @@
 {
-  "name": "relative-to-absolute",
-  "version": "1.0.0",
+  "name": "absolutely",
+  "version": "0.1.0",
   "main": "src/index.ts",
   "license": "MIT",
   "bin": {
