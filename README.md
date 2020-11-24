@@ -11,7 +11,7 @@ tool should help you convince the rest of your team that it can be effortless. N
 ## Usage
 
 ```bash
-absolutely -g './src/**/*.ts?(x)' -n '@app' -r './src'
+absolutely -g './src/**/*.ts?(x)' -n '@' -r './src'
 ```
 
 This will rename an import in a file `./src/components/clock/index.ts` like so:
